@@ -27,7 +27,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     );
 
     private static final Map<String, List<String>> protectedEndpointsWithRoles = Map.of(
-            "/auth/api/v1/welcome", List.of("ROLE_ADMIN")
+            "/auth/api/v1/welcome", List.of("ROLE_ADMIN"),
+            "/micro1/api/v1/king", List.of("ROLE_ADMIN")
     );
 
 

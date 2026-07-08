@@ -77,6 +77,10 @@ public class securityController {
 
   }
 
+    @GetMapping("/get-user")
+    public User getUser(@RequestParam String username) {
+        return userRepository.findByUsername(username);
+    }
 
 
 }
