@@ -29,7 +29,6 @@ public class Rooms {
     private Property property;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<RoomAvailability> roomAvailability = new ArrayList<>();
 
     public List<RoomAvailability> getRoomAvailability() {
