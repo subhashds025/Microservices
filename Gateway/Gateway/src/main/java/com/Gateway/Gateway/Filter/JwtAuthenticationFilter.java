@@ -23,7 +23,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
     private static final List<String> openApiEndpoints = List.of(
             "/auth/api/v1/login",
-            "/auth/api/v1/register"
+            "/auth/api/v1/register",
+            "/property/api/v1/property/**"
     );
 
     private static final Map<String, List<String>> protectedEndpointsWithRoles = Map.of(
@@ -77,8 +78,18 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange);
     }
 
+//    private boolean isPublicEndpoint(String path) {
+//        return openApiEndpoints.stream().anyMatch(path::equalsIgnoreCase);
+//    }
+
     private boolean isPublicEndpoint(String path) {
-        return openApiEndpoints.stream().anyMatch(path::equalsIgnoreCase);
+        return openApiEndpoints.stream().anyMatch(pattern -> {
+            if (pattern.endsWith("/**")) {
+                String prefix = pattern.substring(0, pattern.length() - 3);
+                return path.startsWith(prefix);
+            }
+            return path.equalsIgnoreCase(pattern);
+        });
     }
 
     private boolean isAuthorized(String path, String role) {

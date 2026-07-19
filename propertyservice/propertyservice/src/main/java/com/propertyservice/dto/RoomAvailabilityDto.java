@@ -1,25 +1,22 @@
-package com.propertyservice.entity;
+package com.propertyservice.dto;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "room_availability")
-public class RoomAvailability {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RoomAvailabilityDto {
     private long id;
 
     private LocalDate availableDate;
     private int availableCount;
     private double price;
+    private long roomId;
 
-    @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Rooms room;
+    public long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
 
     public long getId() {
         return id;
@@ -37,9 +34,7 @@ public class RoomAvailability {
         return price;
     }
 
-    public Rooms getRoom() {
-        return room;
-    }
+
 
     public void setId(long id) {
         this.id = id;
@@ -57,8 +52,9 @@ public class RoomAvailability {
         this.price = price;
     }
 
-    public void setRoom(Rooms room) {
-        this.room = room;
-    }
+
+    // Getters and Setters...
+
+
 
 }

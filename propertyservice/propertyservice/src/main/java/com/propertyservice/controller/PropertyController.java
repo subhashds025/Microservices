@@ -2,17 +2,18 @@ package com.propertyservice.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
+import com.propertyservice.dto.RoomAvailabilityDto;
 import com.propertyservice.entity.Property;
+import com.propertyservice.entity.RoomAvailability;
 import com.propertyservice.entity.Rooms;
+import com.propertyservice.repository.RoomAvailabilityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.propertyservice.dto.APIResponse;
 import com.propertyservice.dto.PropertyDto;
@@ -25,6 +26,9 @@ import tools.jackson.databind.ObjectMapper;
 @RequestMapping("/api/v1/property")
 public class PropertyController {
 
+
+    @Autowired
+    private RoomAvailabilityRepository roomAvailabilityRepository;
     private final PropertyService propertyService;
 
     public PropertyController(PropertyService propertyService) {
@@ -87,5 +91,49 @@ public class PropertyController {
         response.setStatus(201);
         response.setData(room);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+
+
+    @GetMapping("/property-id")
+    public APIResponse<PropertyDto> getPropertyById(@RequestParam long id){
+        APIResponse<PropertyDto> response = propertyService.findPropertyById(id);
+        return response;
+    }
+
+    @GetMapping("/room-available-room-id")
+    public APIResponse<List<RoomAvailabilityDto>> getTotalRoomsAvailable(@RequestParam long id){
+        List<RoomAvailabilityDto> totalRooms = propertyService.getTotalRoomsAvailable(id);
+
+
+
+        APIResponse<List<RoomAvailabilityDto>> response = new APIResponse<>();
+        response.setMessage("Total rooms");
+        response.setStatus(200);
+        response.setData(totalRooms);
+        return response;
+    }
+
+    @GetMapping("/room-id")
+    public APIResponse<Rooms> getRoomType(@RequestParam long id){
+        Rooms room = propertyService.getRoomById(id);
+
+        APIResponse<Rooms> response = new APIResponse<>();
+        response.setMessage("Total rooms");
+        response.setStatus(200);
+        response.setData(room);
+        return response;
+    }
+
+    @PutMapping("/roomcount")
+    public String reduceRoomCount(@RequestBody Map<Long, LocalDate> roomData) {
+        for (Map.Entry<Long, LocalDate> entry : roomData.entrySet()) {
+
+            RoomAvailability roomAvailability  = roomAvailabilityRepository.findByRoomIdAndAvailableDate(entry.getKey(),entry.getValue());
+           int count= roomAvailability.getAvailableCount();
+           roomAvailability.setAvailableCount(count-1);
+            roomAvailabilityRepository.saveAndFlush(roomAvailability);
+        }
+        return "Count Reduced";
     }
 }
